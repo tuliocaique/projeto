@@ -1,0 +1,16 @@
+{
+    "name": "tulio/projeto",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Projeto\\": "./Projeto/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Túlio Oliveira",
+            "email": "tulio.caique@gmail.com"
+        }
+    ],
+    "require": {}
+}
