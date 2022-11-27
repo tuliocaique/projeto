@@ -1,5 +1,10 @@
 <?php
 return [
+    '/' => [
+        'controller' => App\Controllers\HomeController::class,
+        'action' => 'index',
+        'name' => 'home',
+    ],
   '/cidadao/cadastrar' => [
       'controller' => App\Controllers\CidadaoController::class,
       'action' => 'cadastrar',

@@ -79,6 +79,28 @@ class Router
         return null;
     }
 
+    private static function call($value, $URL_SPLIT)
+    {
+        /* Instanciando o controller */
+        $controller = new $value['controller'];
+        $action = $value['action'];
+        $params = [];
+        foreach ($value['params'] as $pos => $param) {
+            $params[] = $URL_SPLIT[$pos];
+        }
+        /* Chamando o método do controller */
+        /** @var View|string $view */
+        $view = $controller->$action(new Request($_SERVER['REQUEST_METHOD']), ...$params);
+        if (isset($view) && $view instanceof View) {
+            $view->render();
+            return true;
+        } else if (isset($view)) {
+            header("Location: {$view}");
+            return true;
+        }
+        return false;
+    }
+
     protected static function callController($REQUEST_URI)
     {
         if (self::$Router == null) {
@@ -92,32 +114,17 @@ class Router
         $URL_SPLIT = explode('/', $REDIRECT_URL);
         /* Deletando a primeira posição do array, pois ela é vazia */
         unset($URL_SPLIT[0]);
-
         /* Verificando se a url atual é uma rota definida */
         foreach ($Router->rotas as $key => $value) {
             /* Quantidade de partes definidas na rota */
             $count_url = count($value['url']);
-            /* Quantidade de parametros definidas na rota */
-            $count_params = count($value['params']);
             /* Verifica se a rota digitada é igual a rota definida */
-            if (preg_match("%{$value['url_complete']}%", $REDIRECT_URL, $matches) && $count_url == count($URL_SPLIT)) {
-                /* Instanciando o controller */
-                $controller = new $value['controller'];
-                $action = $value['action'];
-                $params = [];
-                foreach ($value['params'] as $pos => $param) {
-                    $params[] = $URL_SPLIT[$pos];
+            if ($value['url_complete'] == '/') {
+                if ($REQUEST_URI == '/') {
+                    return Router::call($value, $URL_SPLIT);
                 }
-                /* Chamando o método do controller */
-                /** @var View|string $view */
-                $view = $controller->$action(new Request($_SERVER['REQUEST_METHOD']), ...$params);
-                if (isset($view) && $view instanceof View) {
-                    $view->render();
-                    return true;
-                } else if (isset($view)) {
-                    header("Location: {$view}");
-                    return true;
-                }
+            } else if (preg_match("%^{$value['url_complete']}%", $REDIRECT_URL) && $count_url == count($URL_SPLIT)) {
+                return Router::call($value, $URL_SPLIT);
             }
         }
 

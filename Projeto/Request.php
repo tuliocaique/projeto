@@ -28,23 +28,26 @@ class Request
     public function getQueryParams($key = null)
     {
         $params = explode('?', $_SERVER['REQUEST_URI']);
-        $params = $params[1];
-        $params = explode('&', $params);
-        $params = array_map(function ($item) {
-            return explode('=', $item);
-        }, $params);
+        if(!empty($params) && sizeof($params) > 1) {
+            $params = $params[1];
+            $params = explode('&', $params);
+            $params = array_map(function ($item) {
+                return explode('=', $item);
+            }, $params);
 
-        $query_params = [];
-        foreach ($params as $param) {
-            if(isset($param[0], $param[1])) {
-                $query_params[$param[0]] = $param[1];
+            $query_params = [];
+            foreach ($params as $param) {
+                if(isset($param[0], $param[1])) {
+                    $query_params[$param[0]] = $param[1];
+                }
             }
-        }
 
-        if ($key) {
-            return isset($query_params[$key]) ? $query_params[$key] : null;
+            if ($key) {
+                return isset($query_params[$key]) ? $query_params[$key] : null;
+            }
+            return $params;
         }
-        return $params;
+        return [];
     }
 
     public function getData($key = null)
