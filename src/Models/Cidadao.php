@@ -13,6 +13,8 @@ class Cidadao extends Model
 {
 
     public $table = 'cidadao';
+    /* Esse array possui os campos da tabela do banco de dados, toda a consulta e execuções no banco de dados
+    é realizado pela classe Model, essa classe é responsável por transformar os valores desse array em atributos dinamicamente  */
     public $fields = [
         'id',
         'nome',
